@@ -1,0 +1,39 @@
+<plugin>
+	<nom>
+		<multi>
+			[fr]Porte Plume Partout
+			[en]Quill everywhere
+		</multi>
+	</nom>
+	<slogan>
+		<multi>
+		[fr]Afficher le Porte Plume sur la plupart des champs de saisie
+		[en]Display Quill on most input fields
+		</multi>
+	</slogan>
+	<auteur>Pascal M&#233;chin - Matthieu Marcillaud - Jacques Pyrat</auteur>
+	<licence>GPLv3</licence>
+	<version>1.0.11</version>
+	<icon>images/configure_toolbars-48.png</icon>
+	<lien>https://contrib.spip.net/Plugin-Porte-plume-partout</lien>
+
+	<description>
+		<multi>
+			[fr]Porte Plume Partout sert &#224; ajouter la barre d'&#233;dition aux champs DESCRIPTIF, CHAPO et PS
+			[en]Quill everywhere enables the editing toolbar on other text fields (standfirst, description, ps)
+		</multi>
+	</description>
+	<etat>test</etat>
+	<prefix>ppp</prefix>
+	<pipeline>
+		<nom>header_prive</nom>
+		<action>insert_head_prive</action>
+		<inclure>ppp_pipelines.php</inclure>
+	</pipeline>
+
+	<necessite id="SPIP" version="[2.0.10;3.3.99]" />
+	<necessite id="porte_plume" version="[1.7.9;]" />
+	<necessite id="cfg" version="[1.16.1;]" />
+	<necessite id="saisies" version="[1.42.11;]" />
+	<categorie>edition</categorie>
+</plugin>

@@ -1,0 +1,24 @@
+<paquet
+	prefix="highslide"
+	categorie="multimedia"
+	version="4.1.13"
+	etat="stable"
+	compatibilite="[3.0.1;3.0.*]"
+	logo="prive/themes/spip/images/highslide-64.png"
+	documentation="http://lededansdubocal.net/Le-plugin-SPIP-Highslide.html"
+>
+	<!--
+		Paquet généré le 2012-06-17 17:56:04
+	-->
+
+	<nom>Highslide</nom>
+
+	<auteur lien='http://lededansdubocal.net/'>Franck Ruzzin</auteur>
+
+	<licence>GNU/GPL</licence>
+	<copyright>décembre 2010-juin 2012</copyright>
+
+	<pipeline nom="insert_head" inclure="highslide_pipelines.php" />
+	<pipeline nom="header_prive" inclure="highslide_pipelines.php" />
+
+</paquet>

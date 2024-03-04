@@ -1,0 +1,126 @@
+<div class="formulaire_spip formulaire_configurer formulaire_#FORM">
+
+	<h3 class="titrem"><:highslide:cfg_titre_parametrages:></h3>
+
+	[<p class="reponse_formulaire reponse_formulaire_ok">(#ENV*{message_ok})</p>]
+	[<p class="reponse_formulaire reponse_formulaire_erreur">(#ENV*{message_erreur})</p>]
+	
+	<form method="post" action="#ENV{action}">
+	<div>
+		#ACTION_FORMULAIRE{#ENV{action}}
+
+		<ul>
+			<li class="editer editer_thumbHeight[ (#ENV**{erreurs}|table_valeur{thumbHeight}|oui)erreur]">
+				<label for="thumbHeight"><:highslide:thumbheight:></label>
+				[<span class='erreur'>(#ENV**{erreurs}|table_valeur{thumbHeight})</span>]
+				<input type="text" name="thumbHeight" class="text" id="thumbHeight" value="[(#ENV*{thumbHeight}|>={0}|?{#ENV*{thumbHeight}, '100'})]" />
+				<span>&nbsp;pixels</span>
+			</li>
+			
+			<li class="editer editer_thumbWidth[ (#ENV**{erreurs}|table_valeur{thumbWidth}|oui)erreur]">
+				<label for="thumbWidth"><:highslide:thumbWidth:></label>
+				[<span class='erreur'>(#ENV**{erreurs}|table_valeur{thumbWidth})</span>]
+				<input type="text" name="thumbWidth" class="text" id="thumbWidth" value="[(#ENV*{thumbWidth}|>={0}|?{#ENV*{thumbWidth}, '0'})]" />
+				<span>&nbsp;pixels</span>
+			</li>
+			
+			<li class="editer editer_imageSize[ (#ENV**{erreurs}|table_valeur{imageSize}|oui)erreur]">
+				<label for="imageSize"><:highslide:image_size:></label>
+				[<span class='erreur'>(#ENV**{erreurs}|table_valeur{imageSize})</span>]
+				<input type="text" name="imageSize" class="text" id="imageSize" value="[(#ENV*{imageSize}|>={0}|?{#ENV*{imageSize}, '500'})]" />
+				<span>&nbsp;pixels</span>
+			</li>
+			
+			<br />
+			
+			<li class="editer editer_image_align[ (#ENV**{erreurs}|table_valeur{image_align}|oui)erreur]">
+				<label for="image_align"><:highslide:images_position:></label>
+				[<span class='erreur'>(#ENV**{erreurs}|table_valeur{image_align})</span>]
+				<select name='image_align' id='image_align' class='text'>
+					<option value="" [(#ENV*{image_align}|=={''}|?{'selected'})]><:highslide:undefined:></option>
+					<option value="center" [(#ENV*{image_align}|=={'center'}|?{'selected'})]><:highslide:center:></option>
+					<option value="auto" [(#ENV*{image_align}|=={'auto'}|?{'selected'})]><:highslide:auto:></option>
+				</select>
+			</li>
+			
+			<li class="editer editer_autoplay[ (#ENV**{erreurs}|table_valeur{autoplay}|oui)erreur]">
+				<label for="autoplay"><:highslide:autoplay:></label>
+				[<span class='erreur'>(#ENV**{erreurs}|table_valeur{autoplay})</span>]
+				<select name='autoplay' id='autoplay' class='text'>
+					<option value="false" [(#ENV*{autoplay}|=={'false'}|?{'selected'})]><:highslide:false:></option>
+					<option value="true" [(#ENV*{autoplay}|=={'true'}|?{'selected'})]><:highslide:true:></option>
+				</select>
+			</li>
+			
+			<li class="editer editer_numberPosition[ (#ENV**{erreurs}|table_valeur{numberPosition}|oui)erreur]">
+				<label for="numberPosition"><:highslide:page_number_position:></label>
+				[<span class='erreur'>(#ENV**{erreurs}|table_valeur{numberPosition})</span>]
+				<select name='numberPosition' id='numberPosition' class='text'>
+					<option value="" [(#ENV*{numberPosition}|=={''}|?{'selected'})]><:highslide:none:></option>
+					<option value="caption" [(#ENV*{numberPosition}|=={'caption'}|?{'selected'})]><:highslide:caption:></option>
+					<option value="heading" [(#ENV*{numberPosition}|=={'heading'}|?{'selected'})]><:highslide:heading:></option>
+				</select>
+			</li>
+			
+			<li class="editer editer_dimmingOpacity[ (#ENV**{erreurs}|table_valeur{dimmingOpacity}|oui)erreur]">
+				<label for="dimmingOpacity"><:highslide:dimming_opacity:></label>
+				[<span class='erreur'>(#ENV**{erreurs}|table_valeur{dimmingOpacity})</span>]
+				<input type="text" name="dimmingOpacity" class="text" id="dimmingOpacity" value="[(#ENV{dimmingOpacity}|>{0}|?{#ENV{dimmingOpacity}|<{100}|?{#ENV{dimmingOpacity},100}, '0'})]" />
+				<span>&nbsp;%</span>
+			</li>
+			
+			<li class="editer editer_dimmingDuration[ (#ENV**{erreurs}|table_valeur{dimmingDuration}|oui)erreur]">
+				<label for="dimmingDuration"><:highslide:dimming_duration:></label>
+				[<span class='erreur'>(#ENV**{erreurs}|table_valeur{dimmingDuration})</span>]
+				<input type="text" name="dimmingDuration" class="text" id="dimmingDuration" value="[(#ENV{dimmingDuration}|>={0}|?{#ENV{dimmingDuration}, '50'})]" />
+				<span>&nbsp;msec</span>
+			</li>
+			
+			<li class="editer editer_interval[ (#ENV**{erreurs}|table_valeur{interval}|oui)erreur]">
+				<label for="interval"><:highslide:interval:></label>
+				[<span class='erreur'>(#ENV**{erreurs}|table_valeur{interval})</span>]
+				<input type="text" name="interval" class="text" id="interval" value="[(#ENV{interval}|>={0}|?{#ENV{interval}, '5000'})]" />
+				<span>&nbsp;msec</span>
+			</li>
+			
+			<li class="editer editer_transitionDuration[ (#ENV**{erreurs}|table_valeur{transitionDuration}|oui)erreur]">
+				<label for="transitionDuration"><:highslide:transition_duration:></label>
+				[<span class='erreur'>(#ENV**{erreurs}|table_valeur{transitionDuration})</span>]
+				<input type="text" name="transitionDuration" class="text" id="transitionDuration" value="[(#ENV{transitionDuration}|>={0}|?{#ENV{transitionDuration}, '500'})]" />
+				<span>&nbsp;msec</span>
+			</li>
+			
+			<li class="editer editer_repeat[ (#ENV**{erreurs}|table_valeur{repeat}|oui)erreur]">
+				<label for="repeat"><:highslide:repeat:></label>
+				[<span class='erreur'>(#ENV**{erreurs}|table_valeur{repeat})</span>]
+				<select name='repeat' id='repeat' class='text'>
+					<option value="false" [(#ENV*{repeat}|=={'false'}|?{'selected'})]><:highslide:false:></option>
+					<option value="true" [(#ENV*{repeat}|=={'true'}|?{'selected'})]><:highslide:true:></option>
+				</select>
+			</li>
+			
+		</ul>
+		
+		<input type="hidden" name="_meta_casier" value="highslide" />
+		<p class="boutons">
+			<span class="image_loading">&nbsp;</span>
+			<input type="submit" name="reinit" class="submit" value="<:highslide:bouton_reinitialiser:>" />
+			<input type="submit" class="submit" value="<:bouton_enregistrer:>" />
+		</p>
+	</div>
+	</form>
+</div>
+
+<style type="text/css">
+.formulaire_spip li {
+	padding-top:0;
+}
+.formulaire_spip li label, .formulaire_spip li.gauche label {
+	width: 375px;
+}
+.formulaire_spip input.text, .formulaire_spip input.password, .formulaire_spip textarea, .formulaire_spip select {
+    width: 110px;
+	float: left;
+	margin-left:4px;
+}
+</style>

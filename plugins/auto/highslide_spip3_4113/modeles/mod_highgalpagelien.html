@@ -1,0 +1,214 @@
+[(#REM)
+		Modèle mod_highgalpagelien
+		25 août 2011
+        Insère un diaporama HighSlide avec chemin de vignettes dans le diaporama. Le diaporama a des dimensions fixées et est intégré à la page.
+		On utilise la légende de l'image jointe pour fixer un lien vers un site :
+		Le libellé du lien est dans le champ "Titre du document"
+		Le lien est dans le champ "Description"
+][(#REM)
+        Les images à visualiser sont jointes à l'article dont l'id suit le nom du modèle, et ajoutées dans le portefolio.
+		Usage : 
+			<mod_highslidegallerypage25> insère un diaporama highslide (avec chemin de vignettes) avec les images du portfolio de l'article d'id 25
+		Les images qui sont insérées dans l'article ne sont pas concernées.
+][(#REM)
+        paramètres possibles de ce modèle :
+		<mod_highslidegallerypage25|largeur=300|hauteur=300|largeurTotale=350|hauteurTotale=600> implante un diaporama dont les photos sont réduites à 300 px en largeur 
+		et 300 px en hauteur. 
+		Les dimensions extérieures du diaporama sont ici:  hauteur 600 px et largeur 350 px.
+		-> Si largeur ou hauteur (ou les 2) n'est pas indiquée, la valeur 500 px est utilisée pour la(es) dimension(s) manquante(s).
+		-> Si rien n'est indiqué pour largeurTotale, celle ci vaut largeur + 24 px.
+		-> Si rien n'est indiqué pour hauteurTotale, celle ci vaut hauteur + 140 px.
+]
+
+#SET{galleryAreaWidth,#ENV{largeur,500}}
+#SET{galleryAreaHeight,#ENV{hauteur,500}}
+#SET{galleryTotalHeight,#ENV{hauteurTotale,#GET{galleryAreaHeight}|plus{140}}}
+#SET{galleryTotalWidth,#ENV{largeurTotale,#GET{galleryAreaWidth}|plus{24}}}
+
+	
+<BOUCLE_principale(ARTICLES) {id_article=#ENV{id}}>
+<B_document_un>
+
+	<BOUCLE_fixer_id(DOCUMENTS){id_article} {mode=document}{extension IN png,jpg,gif} {par num titre, date}{0,1}>
+		#SET{slideId,#ID_DOCUMENT}
+	</BOUCLE_fixer_id>
+
+	[(#REM) langue par défaut :français]
+	<script type="text/javascript">
+		hs.lang = {
+			cssDirection: 'ltr',
+			loadingText :     'Chargement...',
+			loadingTitle :    'Cliquer pour annuler',
+			focusTitle :      'Cliquer pour amener au premier plan',
+			fullExpandTitle : 'Afficher à la taille réelle',
+			creditsText :     'Développé sur <i>Highslide JS</i>',
+			creditsTitle :    'Site Web de Highslide JS',
+			previousText :    'Précédent',
+			nextText :        'Suivant',
+			moveText :        'Déplacer',
+			closeText :       'Fermer',
+			closeTitle :      'Fermer (esc ou Echap)',
+			resizeTitle :     'Redimensionner',
+			playText :        'Lancer',
+			playTitle :       'Lancer le diaporama (barre d\'espace)',
+			pauseText :       'Pause',
+			pauseTitle :      'Suspendre le diaporama (barre d\'espace)',
+			previousTitle :   'Précédent (flèche gauche)',
+			nextTitle :       'Suivant (flèche droite)',
+			moveTitle :       'Déplacer',
+			fullExpandText :  'Taille réelle',
+			number:			  'Image %1 sur %2',
+			restoreTitle :    'Cliquer pour fermer l\'image, cliquer et faire glisser pour déplacer, utiliser les touches flèches droite et gauche pour suivant et précédent.'		
+		}
+	</script>
+
+	[(#REM) langue de l'article]
+	<script type="text/javascript" src="#CHEMIN{lang/#LANG.js}"></script>
+	
+	[(#REM)
+		doit on afficher la numérotation ? Si non, on l'affichera tout de même et en bas pour préserver la mep, mais avec un espace au lieu de 'Image %1 sur %2'
+	]
+	[(#CONFIG{highslide/numberPosition}|!={caption}|?{
+		#SET{sansNumerotation,oui}
+	,
+		''
+	})]
+	
+	<script type="text/javascript">	
+		hs.lang.creditsText="";
+		[(#GET{sansNumerotation}|oui) hs.lang.number="&nbsp;";]
+		/*
+		Surcharger (optionnel) les réglages définis en haut du fichier highslide.js.
+		Le paramètre hs.graphicsDir est important !
+		*/
+		hs.graphicsDir = '#CHEMIN{css/graphics/}';
+		hs.align = '#CONFIG{highslide/image_align}';
+		hs.transitions = ['expand', 'crossfade'];
+		hs.transitionDuration=#CONFIG{highslide/transitionDuration,500};
+		[hs.autoplay = (#CONFIG{highslide/autoplay});]
+		hs.fadeInOut = true;
+		//[hs.numberPosition = '(#CONFIG{highslide/numberPosition})';]
+		hs.numberPosition = 'caption';
+		hs.restoreCursor = null;
+		hs.lang.restoreTitle = hs.lang.nextText;
+		hs.allowSimultaneousLoading = true;
+		hs.expandDuration = 0;
+
+	
+		// Ajouter le slideshow
+		if ((hs.addSlideshow) && (!hs.isInitialized)) {
+			hs.addSlideshow({
+				interval: #CONFIG{highslide/interval,5000},
+				repeat: #CONFIG{highslide/repeat,false},
+				useControls: true,
+				overlayOptions: {
+					position: 'bottom right',
+					offsetY: 50,
+					offsetX: -5
+				},
+				thumbstrip: {
+					position: 'above',
+					mode: 'horizontal',
+					relativeTo: 'expander'
+				}
+			});
+			
+			
+			// Cancel the default action for image click and do next instead
+			hs.Expander.prototype.onImageClick = function() {
+				if (/in-page/.test(this.wrapper.className))	return hs.next();
+			}
+			// Under no circumstances should the static popup be closed
+			hs.Expander.prototype.onBeforeClose = function() {
+				if (/in-page/.test(this.wrapper.className))	return false;
+			}
+			// ... nor dragged
+			hs.Expander.prototype.onDrag = function() {
+				if (/in-page/.test(this.wrapper.className))	return false;
+			}
+			// Keep the position after window resize
+			hs.addEventListener(window, 'resize', function() {
+				var i, exp;
+				hs.getPageSize();
+
+				for (i = 0; i < hs.expanders.length; i++) {
+					exp = hs.expanders[i];
+					if (exp) {
+						var x = exp.x,
+							y = exp.y;
+
+						// get new thumb positions
+						exp.tpos = hs.getPosition(exp.el);
+						x.calcThumb();
+						y.calcThumb();
+
+						// calculate new popup position
+						x.pos = x.tpos - x.cb + x.tb;
+						x.scroll = hs.page.scrollLeft;
+						x.clientSize = hs.page.width;
+						y.pos = y.tpos - y.cb + y.tb;
+						y.scroll = hs.page.scrollTop;
+						y.clientSize = hs.page.height;
+						exp.justify(x, true);
+						exp.justify(y, true);
+
+						// set new left and top to wrapper and outline
+						exp.moveTo(x.pos, y.pos);
+					}
+				}
+			});
+			hs.Expander.prototype.onMouseOver = function () {
+				this.focus();
+			};
+			
+			hs.isInitialized=true
+		}
+		
+		// Options pour les galleries
+		var targ='gallery-area-#GET{slideId}'+' 10px';
+		var inPageOptions#GET{slideId} = {
+			slideshowGroup: 'group#GET{slideId}',
+			outlineType: null,
+			allowSizeReduction: false,
+			wrapperClassName: 'in-page controls-in-heading',
+			useBox: true,
+			width: #GET{galleryAreaWidth},
+			height: #GET{galleryAreaHeight},
+			targetX: targ,
+			targetY: targ
+		}
+		// Open the first thumb on page load
+		hs.addEventListener(window, 'load', function() {
+			document.getElementById('thumb#GET{slideId}').onclick();
+		});
+	</script>
+
+	<div id="gallery-area-#GET{slideId}" style="width:#GET{galleryTotalWidth}px; height:#GET{galleryTotalHeight}px; margin: 0 auto; border: 1px solid silver; background-color: #FFF; overflow: hidden;">
+		<div style="visibility: hidden;">
+			[(#REM) Placer les vignettes dans un div pour pouvoir intervenir sur le style]
+			[(#REM) SPIP 2.0 rajouter le critère {vu=non}, sinon retirer]
+			<BOUCLE_document_un(DOCUMENTS){id_article} {mode=document}{extension IN png,jpg,gif} {par num titre, date}{doublons}{vu=non}{0,1}>
+				#SET{slideId,#ID_DOCUMENT}
+				[(#REM) Déclaration des vignettes : l'attribut href indique l'URL de l'image grande dimension.]
+				<a id="thumb#GET{slideId}" href="../../../../spip6aef.html#FICHIER|image_reduire{#GET{galleryAreaWidth},#GET{galleryAreaHeight}}||extraire_attribut{src})]" class="highslide" onclick="return hs.expand(this, inPageOptions#GET{slideId})">
+					<img src="../../../../spip6aef.html#FICHIER|image_reduire{0,40}|extraire_attribut{src})]" alt="[(#TITRE|attribut_html)]" title="[(#TITRE|attribut_html)]" />
+				</a>
+				<div class="highslide-caption">
+					<a href="../../../../spip6aef.html#DESCRIPTIF|attribut_html)]">[(#TITRE|attribut_html)]</a>
+				</div>
+			</BOUCLE_document_un>
+
+			[(#REM) SPIP 2.0 rajouter le critère {vu=non}, sinon retirer]
+			<BOUCLE_documents_portfolio(DOCUMENTS){id_article} {mode=document}{extension IN png,jpg,gif} {par num titre, date}{doublons}{vu=non}>
+			[(#REM) Déclaration des vignettes : l'attribut href indique l'URL de l'image grande dimension.]
+			<a href="../../../../spip6aef.html#FICHIER|image_reduire{#GET{galleryAreaWidth},#GET{galleryAreaHeight}}||extraire_attribut{src})]" class="highslide" onclick="return hs.expand(this,inPageOptions#GET{slideId})">
+				<img src="../../../../spip6aef.html#FICHIER|image_reduire{0,40}|extraire_attribut{src})]" alt="[(#TITRE|attribut_html)]" title="[(#TITRE|attribut_html)]" />
+			</a>
+			<div class="highslide-caption">
+				<a href="../../../../spip6aef.html#DESCRIPTIF|attribut_html)]">[(#TITRE|attribut_html)]</a>
+			</div>
+			</BOUCLE_documents_portfolio>
+		</div>
+	</div>
+</B_document_un>
+</BOUCLE_principale>

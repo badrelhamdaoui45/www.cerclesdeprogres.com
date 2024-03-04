@@ -1,0 +1,116 @@
+[(#REM)
+		Modèle mod_highslidegallery
+		25 août 2011
+        Insère un diaporama HighSlide avec gallerie
+][(#REM)
+        Les images à visualiser sont jointes à l'article dont l'id suit le nom du modèle, et ajoutées dans le portefolio.
+		Usage : 
+			<mod_highslidegallery25> insère un diaporama highslide avec les images du portfolio de l'article d'id 25
+		Les images qui sont insérées dans l'article ne sont pas concernées.
+]
+
+[(#REM) langue par défaut :français]
+<script type="text/javascript">
+	hs.lang = {
+		cssDirection: 'ltr',
+		loadingText :     'Chargement...',
+		loadingTitle :    'Cliquer pour annuler',
+		focusTitle :      'Cliquer pour amener au premier plan',
+		fullExpandTitle : 'Afficher à la taille réelle',
+		creditsText :     'Développé sur <i>Highslide JS</i>',
+		creditsTitle :    'Site Web de Highslide JS',
+		previousText :    'Précédent',
+		nextText :        'Suivant',
+		moveText :        'Déplacer',
+		closeText :       'Fermer',
+		closeTitle :      'Fermer (esc ou Echap)',
+		resizeTitle :     'Redimensionner',
+		playText :        'Lancer',
+		playTitle :       'Lancer le diaporama (barre d\'espace)',
+		pauseText :       'Pause',
+		pauseTitle :      'Suspendre le diaporama (barre d\'espace)',
+		previousTitle :   'Précédent (flèche gauche)',
+		nextTitle :       'Suivant (flèche droite)',
+		moveTitle :       'Déplacer',
+		fullExpandText :  'Taille réelle',
+		number:			  'Image %1 sur %2',
+		restoreTitle :    'Cliquer pour fermer l\'image, cliquer et faire glisser pour déplacer, utiliser les touches flèches droite et gauche pour suivant et précédent.'		
+	}
+</script>
+
+[(#REM) langue de l'article]
+<script type="text/javascript" src="#CHEMIN{lang/#LANG.js}"></script>
+
+<script type="text/javascript">	
+	hs.lang.creditsText="";
+	/*
+	Surcharger (optionnel) les réglages définis en haut du fichier highslide.js.
+	Le paramètre hs.graphicsDir est important !
+	*/
+	
+	hs.graphicsDir = '#CHEMIN{css/graphics/}';
+	hs.align = '#CONFIG{highslide/image_align}';
+	hs.transitions = ['expand', 'crossfade'];
+	hs.transitionDuration=#CONFIG{highslide/transitionDuration,500};
+	hs.outlineType = 'rounded-white';
+	[hs.autoplay = (#CONFIG{highslide/autoplay});]
+	hs.fadeInOut = true;
+	[hs.numberPosition = '(#CONFIG{highslide/numberPosition})';]
+	hs.dimmingOpacity = #CONFIG{highslide/dimmingOpacity,1}/100;
+	[hs.dimmingDuration = (#CONFIG{highslide/dimmingDuration});]
+	
+	// Ajouter le slideshow
+	if ((hs.addSlideshow) && (!hs.isInitialized)) {
+		hs.addSlideshow({
+			interval: #CONFIG{highslide/interval,5000},
+			repeat: #CONFIG{highslide/repeat,false},
+			useControls: true,
+			fixedControls: 'fit',
+			overlayOptions: {
+				opacity: .75,
+				position: 'bottom center',
+				hideOnMouseOut: true
+			}
+		});
+		// Ajout d'un bouton de fermeture
+		hs.registerOverlay({
+			html: '<div class="closebutton" onclick="return hs.close(this)" title="'+hs.lang.closeText+'"></div>',
+			position: 'top right',
+			fade: 2 // fading the semi-transparent overlay looks bad in IE
+		});
+		hs.isInitialized=true	
+	}
+	
+</script>
+
+<B_principale>
+[(#REM) Placer les vignettes dans un div pour pouvoir intervenir sur le style]
+<div class="highslide-gallery highslide-center">
+	<h2><:highslide:start_slideshow_gallery:></h2>
+<BOUCLE_principale(ARTICLES) {id_article=#ENV{id}}>
+	<B_document_un>
+		[(#REM) SPIP 2.0 rajouter le critère {vu=non}, sinon retirer]
+		<BOUCLE_document_un(DOCUMENTS){id_article} {mode=document}{extension IN png,jpg,gif} {par num titre, date}{doublons}{vu=non}{0,1}>
+			#SET{slideId,#ID_DOCUMENT}
+			[(#REM) Déclaration des vignettes : l'attribut href indique l'URL de l'image grande dimension.]
+			<a href="#URL_DOCUMENT" class="highslide" onclick="return hs.expand(this,{ slideshowGroup: #GET{slideId}})">
+				<img src="../../../../spip6aef.html#FICHIER|image_reduire{#CONFIG{highslide/thumbWidth,0},#CONFIG{highslide/thumbHeight,100}}|extraire_attribut{src})]" alt="Highslide JS" title="<:highslide:clic_to_enlarge:>[ (#TITRE|attribut_html)]" />
+			</a>
+			[(#REM) (optionnel). Déclaration de la légende. Doit être de la classe "highslide-caption".]
+			[<div class="highslide-caption">(#TITRE)</div>]
+		</BOUCLE_document_un>
+
+		[(#REM) SPIP 2.0 rajouter le critère {vu=non}, sinon retirer]
+		<BOUCLE_documents_portfolio(DOCUMENTS){id_article} {mode=document}{extension IN png,jpg,gif} {par num titre, date}{doublons}{vu=non}>
+		[(#REM) Déclaration des vignettes : l'attribut href indique l'URL de l'image grande dimension.]
+		<a href="#URL_DOCUMENT" class="highslide" onclick="return hs.expand(this,{ slideshowGroup: #GET{slideId}})">
+			<img src="../../../../spip6aef.html#FICHIER|image_reduire{#CONFIG{highslide/thumbWidth,0},#CONFIG{highslide/thumbHeight,100}}|extraire_attribut{src})]" alt="Highslide JS" title="<:highslide:clic_to_enlarge:>[ (#TITRE|attribut_html)]" />
+		</a>
+		[(#REM) (optionnel). Déclaration de la légende. Doit être de la classe "highslide-caption".]
+		[<div class="highslide-caption">(#TITRE)</div>]
+		</BOUCLE_documents_portfolio>
+	</B_document_un>
+</BOUCLE_principale>
+</div>
+</B_principale>
+
